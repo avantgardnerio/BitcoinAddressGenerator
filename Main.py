@@ -1,11 +1,23 @@
-import hashlib,base58,binascii,ecdsa, codecs
+import base58
+import binascii
+import ecdsa
+import hashlib
+from mnemonic import Mnemonic
 
-# Step1: Generate ECDSA Private Key")
+# Step1: Generate ECDSA Private Key
+mnemon = Mnemonic('english')
 ecdsaPrivateKey = ecdsa.SigningKey.generate(curve=ecdsa.SECP256k1)
-print("ECDSA Private Key: ", ecdsaPrivateKey.to_string().hex())
+hex = ecdsaPrivateKey.to_string().hex()
+print("ECDSA Private Key: ", hex)
+print("------------------------------------------------------")
+mnemonic = mnemon.to_mnemonic(bytes.fromhex(hex))
+print("mnemonic: ", mnemonic)
+print("------------------------------------------------------")
+bin = mnemon.to_entropy(mnemonic)
+print("bytes: ", bin.hex())
 print("------------------------------------------------------")
 # Step2: Generate ECDSA Public Key from value at Step#1
-ecdsaPublicKey = '04' +  ecdsaPrivateKey.get_verifying_key().to_string().hex()
+ecdsaPublicKey = '04' + ecdsaPrivateKey.get_verifying_key().to_string().hex()
 print("ECDSA Public Key: ", ecdsaPublicKey)
 print("------------------------------------------------------")
 # Step3: SHA256(value at Step#2)
@@ -22,7 +34,7 @@ print("Prepend Network Byte to RIDEMP160(SHA256(ECDSA Public Key)): ", prependNe
 print("------------------------------------------------------")
 # Step6: Apply SHA256 to value at Step#5 at 2 times to generate Checksum
 hash = prependNetworkByte
-for x in range(1,3):
+for x in range(1, 3):
     hash = hashlib.sha256(binascii.unhexlify(hash)).hexdigest()
     print("\t|___>SHA256 #", x, " : ", hash)
 print("------------------------------------------------------")
