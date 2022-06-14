@@ -2,16 +2,13 @@ import base58
 import binascii
 import ecdsa
 import hashlib
+import sys
 from mnemonic import Mnemonic
 
-# Step1: Generate ECDSA Private Key
+# Step1: Import key from args
 mnemon = Mnemonic('english')
-ecdsaPrivateKey = ecdsa.SigningKey.generate(curve=ecdsa.SECP256k1)
-hex = ecdsaPrivateKey.to_string().hex()
-mnemonic = mnemon.to_mnemonic(bytes.fromhex(hex))
-print("ECDSA Private Key: ", hex)
-print("mnemonic: ", mnemonic)
-print("------------------------------------------------------")
+
+mnemonic = " ".join(sys.argv[1:])
 
 bin = mnemon.to_entropy(mnemonic)
 ecdsaPrivateKey = ecdsa.SigningKey.from_string(bin, ecdsa.SECP256k1)
