@@ -8,14 +8,16 @@ from mnemonic import Mnemonic
 mnemon = Mnemonic('english')
 ecdsaPrivateKey = ecdsa.SigningKey.generate(curve=ecdsa.SECP256k1)
 hex = ecdsaPrivateKey.to_string().hex()
-print("ECDSA Private Key: ", hex)
-print("------------------------------------------------------")
 mnemonic = mnemon.to_mnemonic(bytes.fromhex(hex))
+print("ECDSA Private Key: ", hex)
 print("mnemonic: ", mnemonic)
 print("------------------------------------------------------")
+
 bin = mnemon.to_entropy(mnemonic)
-print("bytes: ", bin.hex())
+ecdsaPrivateKey = ecdsa.SigningKey.from_string(bin, ecdsa.SECP256k1)
+print("Re-imported hex: ", bin.hex())
 print("------------------------------------------------------")
+
 # Step2: Generate ECDSA Public Key from value at Step#1
 ecdsaPublicKey = '04' + ecdsaPrivateKey.get_verifying_key().to_string().hex()
 print("ECDSA Public Key: ", ecdsaPublicKey)
